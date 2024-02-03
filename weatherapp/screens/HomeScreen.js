@@ -1,12 +1,17 @@
 
 import React from 'react';
-import {View, StatusBar, Image, SafeAreaView, TextInput, Touchable, TouchableOpacity} from 'react-native';
+import {View, StatusBar, Image, SafeAreaView, TextInput, Touchable, TouchableOpacity, Text} from 'react-native';
 import { theme } from "../theme/index";
-import { MagnifyingGlassIcon } from "react-native-heroicons/mini";
+import { MagnifyingGlassIcon, MapPinIcon} from "react-native-heroicons/mini";
 import { useState } from 'react';
 
 export default function HomeScreen() {
     const [showSearch, toggleSearch] = useState(false)
+    const [locations, setLocations] = useState([1,2,3])
+
+    const handleLocation = (loc) => {
+        console.log("location: " + loc)
+    }
 
     return (
         <View style={{flex: 1, position: 'relative'}}>
@@ -40,6 +45,32 @@ export default function HomeScreen() {
                             <MagnifyingGlassIcon size="25" color="white" />
                         </TouchableOpacity>
                     </View>
+
+                    {
+                        locations.length >0 && showSearch? (
+                            <View className="absolute w-full bg-gray-300 top-16 rounded-3xl">
+                                {
+                                    locations.map((loc, index) => {
+                                        // don't show border at last item
+                                        let showBorder = index+1 != locations.length
+                                        let borderClass = showBorder? "border-b-2 border-b-gray-400" : ""
+
+                                        return (
+                                            <TouchableOpacity
+                                                onPress={() => handleLocation(loc)}
+                                                key={index}
+                                                className={"flex-row items-center border-0 p-3 px-4 mb-1" + borderClass}
+                                            >
+                                                <MapPinIcon size="20" color="gray" />
+                                                <Text className="text-black text-lg ml-2">London, United Kingdom</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })
+                                }
+                            </View>
+                        ): null
+                    }
+
                 </View>
             </SafeAreaView>
         </View>
