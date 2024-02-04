@@ -6,22 +6,33 @@ import {
     Image,
     SafeAreaView,
     TextInput,
-    Touchable,
     TouchableOpacity,
     Text,
     ScrollView
 } from 'react-native';
 import { theme } from "../theme/index";
 import { CalendarDaysIcon, MagnifyingGlassIcon, MapPinIcon} from "react-native-heroicons/mini";
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { debounce } from "lodash";
+import {fetchLocations} from "../api/weather";
 
 export default function HomeScreen() {
     const [showSearch, toggleSearch] = useState(false)
-    const [locations, setLocations] = useState([1,2,3])
+    const [locations, setLocations] = useState([])
 
     const handleLocation = (loc) => {
         console.log("location: " + loc)
     }
+
+    const handleSearch = search => {
+        if(search && search.length >2) {
+            fetchLocations({cityName: search}).then(data=> {
+                setLocations(data)
+            })
+        }
+    }
+
+    const handleTextDebounce = useCallback(debounce(handleSearch, 1200), [])
 
     return (
         <View style={{flex: 1, position: 'relative'}}>
@@ -40,6 +51,7 @@ export default function HomeScreen() {
                         {
                             showSearch? (
                                 <TextInput
+                                    onChangeText={handleTextDebounce}
                                     className={"text-white text-base pb-1 flex-1 h-10 pl-6"}
                                     placeholder="Search City"
                                     placeholderTextColor={"lightgray"}
@@ -72,7 +84,7 @@ export default function HomeScreen() {
                                                 className={"flex-row items-center border-0 p-3 px-4 mb-1" + borderClass}
                                             >
                                                 <MapPinIcon size="20" color="gray" />
-                                                <Text className="text-black text-lg ml-2">London, United Kingdom</Text>
+                                                <Text className="text-black text-lg ml-2">{loc?.name}, {loc?.cityName}</Text>
                                             </TouchableOpacity>
                                         )
                                     })

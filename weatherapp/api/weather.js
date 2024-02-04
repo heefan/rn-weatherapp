@@ -1,10 +1,15 @@
 import axios from 'axios'
-import { apiKey } from "../constants";
+import { REACT_APP_WEATHER_API_KEY } from '@env';
 
-const forecastEndpoint = params => `https://api.weatherapi.com/v1/forecast.json?key={apiKey}&q={params.cityName}&days={params.days}&aqi=no&alerts=no`
-const locationEndpoint = params => `https://api.weatherapi.com/v1/search.json?key={apiKey}&q={params.cityName}&days={params.days}&aqi=no&alerts=no`
+const apiKey = REACT_APP_WEATHER_API_KEY
+
+const forecastEndpoint = params => `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${params.cityName}&days=${params.days}&aqi=no&alerts=no`
+const locationEndpoint = params => `https://api.weatherapi.com/v1/search.json?key=${apiKey}&q=${params.cityName}&days=${params.days}&aqi=no&alerts=no`
 
 const apiCall = async (endpoint) => {
+
+    console.log(endpoint)
+
     const options = {
         method: 'GET',
         url: endpoint,
@@ -20,9 +25,11 @@ const apiCall = async (endpoint) => {
 }
 
 export const fetchWeatherForecast = params => {
+    console.log("fetch weather forecast")
     return apiCall(forecastEndpoint(params))
 }
 
-export const fetchLocation = params => {
+export const fetchLocations = params => {
+    console.log("fetch locations")
     return apiCall(locationEndpoint(params))
 }
